@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STC Item Details</title>
+    
+    <!-- Tailwind CSS CDN - Design එක ලස්සනට සහ Mobile Friendly කරගන්න -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <!-- ප්‍රධාන Card එක (Screen එකේ මැදට එන්න හදලා තියෙන්නේ) -->
+    <div class="max-w-md w-full bg-white p-6 rounded-lg shadow-lg text-center">
+        
+        <!-- App එකේ Title එක -->
+        <h1 class="text-xl font-bold text-blue-600 mb-4">STC Price Checker</h1>
+        
+        <!-- දත්ත පෙන්නන Box එක -->
+        <div id="details-box" class="space-y-4">
+            <p class="text-gray-500">දත්ත ලබාගනිමින් පවතී...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript කොටස (QR එක scan කරාම URL එකෙන් ID එක අරන් ඩාටා ලෝඩ් කරන තැන) -->
+    <script>
+        // 1. Browser URL එකේ තියෙන parameters (උදා: view.html?id=5) කියවා ගැනීම
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('id'); // මෙතනින් ID එක අල්ලා ගන්නවා
+
+        const detailsBox = document.getElementById('details-box');
+
+        // 2. URL එකේ ID එකක් නැත්නම් හෝ වැරදි නම් Error එකක් පෙන්වීම
+        if (!itemId) {
+            detailsBox.innerHTML = `<p class="text-red-500 font-semibold">අවලංගු QR කේතයකි! කරුණාකර సరైన QR එකක් ස්කෑන් කරන්න.</p>`;
+        } else {
+            
+            // 3. ID එක හරි නම්, තාවකාලිකව "ਲෝඩ් වෙමින්..." කියන Box එක පෙන්වීම
+            detailsBox.innerHTML = `
+                <div class="border p-4 rounded-md bg-gray-50 text-left space-y-2">
+                    <p class="text-xs text-gray-400">Item ID: ${itemId}</p>
+                    <p class="text-lg"><strong>නම:</strong> <span id="view-name" class="text-gray-800">ලෝඩ් වෙමින්...</span></p>
+                    <p class="text-md"><strong>මොඩල් එක:</strong> <span id="view-model" class="text-gray-800">ලෝඩ් වෙමින්...</span></p>
+                    <p class="text-xl font-bold text-green-600">මිල: Rs. <span id="view-price">0.00</span></p>
+                </div>
+            `;
+            
+            // 4. ඊළඟට Google Sheet එකෙන් (Apps Script API එක හරහා) මේ ID එකට අදාළ 
+            // Name, Model, Price ගෙන්නලා අර උඩ තියෙන span වලට දාන JavaScript කෝඩ් එක අපි ඊළඟට ලියමු.
+        }
+    </script>
+</body>
+</html>

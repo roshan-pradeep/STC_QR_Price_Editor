@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STC QR Price Editor - Admin Panel</title>
+    
+    <!-- Tailwind CSS CDN - Design එක ලස්සනට සහ Mobile Friendly කරගන්න -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- QRCode.js Library - QR Code generate කරගන්න පාවිච්චි කරන Library එක -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- ප්‍රධාන Container එක -->
+    <div class="max-w-4xl mx-auto p-4 my-6 bg-white rounded-lg shadow-lg">
+        
+        <!-- App එකේ නම / Header එක -->
+        <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">STC QR Price Editor</h1>
+
+        <!-- 1. අලුත් Item එකක් Add කරන්න හෝ Edit කරන්න තියෙන Form එක -->
+        <div class="bg-gray-50 p-4 rounded-md mb-6 border">
+            <h2 id="form-title" class="text-lg font-semibold mb-3 text-gray-700">අලුත් Item එකක් එකතු කරන්න</h2>
+            
+            <form id="item-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Hidden Input එක (Edit කරනකොට adala item ID එක තියාගන්න) -->
+                <input type="hidden" id="item-id">
+                
+                <!-- Item Name එක දාන Field එක -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Item Name</label>
+                    <input type="text" id="item-name" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="උදා: Router">
+                </div>
+                
+                <!-- Model එක දාන Field එක -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Model</label>
+                    <input type="text" id="item-model" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="උදා: RT-AC68U">
+                </div>
+                
+                <!-- Price එක දාන Field එක -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Price (Rs.)</label>
+                    <input type="number" step="0.01" id="item-price" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="උදා: 15000">
+                </div>
+                
+                <!-- Save Button එක -->
+                <div class="md:col-span-3 flex justify-end">
+                    <button type="submit" id="save-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Save & Generate QR</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 2. Search Bar එක (Model එකෙන් හෝ නමින් ලේසියෙන් හොයාගන්න) -->
+        <div class="mb-4">
+            <input type="text" id="search-box" placeholder="Model එකෙන් හෝ නමින් Search කරන්න..." class="w-full p-2 border rounded-md">
+        </div>
+
+        <!-- 3. Items පෙන්නන Table එක -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-blue-100 text-blue-800">
+                        <th class="p-2 border">ID</th>
+                        <th class="p-2 border">Name</th>
+                        <th class="p-2 border">Model</th>
+                        <th class="p-2 border">Price</th>
+                        <th class="p-2 border text-center">Actions (Edit / QR)</th>
+                    </tr>
+                </thead>
+                <tbody id="items-table-body">
+                    <!-- JavaScript හරහා Google Sheet එකේ ඩාටා ටික මෙතනට Load වෙයි -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 4. QR Code එක පෙන්වන Box එක (Item එක Save කරාම මෙතන QR එක හැදිලා පෙන්නනවා) -->
+        <div id="qr-container" class="mt-6 p-4 bg-gray-50 border rounded-md text-center hidden">
+            <h3 class="font-semibold text-gray-700 mb-2">Generated QR Code</h3>
+            <!-- QR Image එක වැටෙන div එක -->
+            <div id="qrcode" class="flex justify-center mb-2"></div>
+            <!-- QR එකට අදාළ Link එක පෙන්වන text එක -->
+            <p id="qr-link-text" class="text-sm text-gray-500 break-all"></p>
+        </div>
+    </div>
+
+    <!-- JavaScript File එක සම්බන්ධ කරන තැන -->
+    <script src="script.js"></script>
+</body>
+</html>
