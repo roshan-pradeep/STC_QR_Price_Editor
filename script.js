@@ -48,7 +48,7 @@ function fetchItems(searchQuery = "") {
             // *** අලුතින් එකතු කළ ඩාටා උඩින්ම පෙන්වීම සඳහා array එක ආපසු හැරවීම (Reverse) ***
             data.reverse();
 
-            // ලැබෙන දත්ත එකින් එක Table එකට ඇතුළත් කිරීම
+            // ලැබෙන දත්ත එකින් එක Table එකට ඇතුළත් කිරීම (මෙහිදී QR Gen බටන් එකට id එක සමඟ model එකත් යවා ඇත)
             data.forEach(item => {
                 let row = `
                     <tr class="border-b hover:bg-gray-50">
@@ -58,7 +58,7 @@ function fetchItems(searchQuery = "") {
                         <td class="p-2 border">Rs. ${parseFloat(item.price).toFixed(2)}</td>
                         <td class="p-2 border text-center space-x-2">
                             <button onclick="editItem('${item.id}', '${item.item_name}', '${item.model}', '${item.price}')" class="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button>
-                            <button onclick="generateQRCode('${item.id}')" class="bg-green-600 text-white px-2 py-1 rounded text-xs hover:bg-green-700">QR Gen</button>
+                            <button onclick="generateQRCode('${item.id}', '${item.model}')" class="bg-green-600 text-white px-2 py-1 rounded text-xs hover:bg-green-700">QR Gen</button>
                         </td>
                     </tr>
                 `;
@@ -116,7 +116,7 @@ if (itemForm) {
                 saveBtn.disabled = false;
                 
                 fetchItems(); // Table එක නැවත Refresh කිරීම
-                generateQRCode(result.id); // Save වුණු වහාම අදාළ QR එක generate කර පෙන්වීම
+                generateQRCode(result.id, model); // Save වුණු වහාම අදාළ Model එකට අදාළ QR එක generate කර පෙන්වීම
             }
         })
         .catch(error => {
@@ -140,9 +140,10 @@ function editItem(id, name, model, price) {
 }
 
 /**
- * 4. QR Code එක Generate කර Screen එකේ පෙන්වීම (GitHub Pages ෆෝල්ඩර් පාත් එක සමඟ නිවැරදිව ක්‍රියාත්මක වේ)
+ * 4. QR Code එක Generate කර Screen එකේ පෙන්වීම 
+ *    (GitHub Pages සහ Localhost දෙකටම හරියන ලෙස Model එක URL එකට අඩංගු කර ඇත)
  */
-function generateQRCode(id) {
+function generateQRCode(id, model) {
     let qrContainer = document.getElementById("qr-container");
     let qrcodeDiv = document.getElementById("qrcode");
     let qrLinkText = document.getElementById("qr-link-text");
@@ -150,10 +151,18 @@ function generateQRCode(id) {
     qrcodeDiv.innerHTML = ""; // මීට පෙර තිබූ QR එක clear කිරීම
     qrContainer.classList.remove("hidden"); // QR Box එක පෙන්වීම
 
-    // GitHub Pages හෝ Live Server එකේ repository/folder නම සමඟ නිවැරදි URL එක සකස් කිරීම
-    let path = window.location.pathname;
-    let folderPath = path.substring(0, path.lastIndexOf('/'));
-    let viewPageUrl = `${window.location.origin}${folderPath}/view.html?id=${id}`;
+    let viewPageUrl = "";
+
+    // GitHub Pages වල ද නැත්නම් කොම්පියුටරේද (localhost) කියලා පරීක්ෂා කිරීම
+    if (window.location.hostname.includes("github.io")) {
+        // GitHub Pages වල නම් හරියටම Repo එකේ නම (STC_QR_Price_Editor) සමඟ URL එක සකස් වේ
+        viewPageUrl = `https://roshan-pradeep.github.io/STC_QR_Price_Editor/view.html?model=${encodeURIComponent(model)}`;
+    } else {
+        // ලෝකල් සර්වර් එකේ (Live Server) නම්
+        let path = window.location.pathname;
+        let folderPath = path.substring(0, path.lastIndexOf('/'));
+        viewPageUrl = `${window.location.origin}${folderPath}/view.html?model=${encodeURIComponent(model)}`;
+    }
 
     // QRCode library එක පාවිච්චි කරලා QR එක ඇඳීම
     new QRCode(qrcodeDiv, {
@@ -177,15 +186,15 @@ if (searchBox) {
 }
 
 /**
- * 6. View Page එක සඳහා Google Sheet එකෙන් අදාළ Item එකේ විස්තර ගෙනැවිත් පෙන්වීම (`view.html` සඳහා)
+ * 6. View Page එක සඳහා Google Sheet එකෙන් Model එක මඟින් අදාළ Item එකේ විස්තර ගෙනැවිත් පෙන්වීම (`view.html` සඳහා)
  */
 function fetchSingleItemDetails() {
     const urlParams = new URLSearchParams(window.location.search);
-    const itemId = urlParams.get('id');
+    const itemModel = urlParams.get('model'); // URL එකෙන් model එක ලබාගැනීම
 
-    if (!itemId) return;
+    if (!itemModel) return;
 
-    fetch(`${API_URL}?action=get_single&id=${itemId}`)
+    fetch(`${API_URL}?action=get_single&model=${encodeURIComponent(itemModel)}`)
         .then(response => response.json())
         .then(item => {
             if (item.error) {
