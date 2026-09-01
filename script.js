@@ -107,7 +107,7 @@ if (itemForm) {
                 // Form එක සම්පූර්ණයෙන්ම Reset කර ඉන්පුට් බොක්ස් හිස් කිරීම
                 itemForm.reset();
                 
-                // Hidden ID field එක සම්පූර්ණයෙන්ම හිස් කිරීම (അතින් Edit මෝඩ් එකෙන් ඉවත් වීමට)
+                // Hidden ID field එක සම්පූර්ණයෙන්ම හිස් කිරීම (අතින් Edit මෝඩ් එකෙන් ඉවත් වීමට)
                 document.getElementById("item-id").value = "";
                 
                 // Form Title එක සහ Button එක මුල් තත්ත්වයට පත් කිරීම
@@ -140,7 +140,7 @@ function editItem(id, name, model, price) {
 }
 
 /**
- * 4. QR Code එක Generate කර Screen එකේ පෙන්වීම
+ * 4. QR Code එක Generate කර Screen එකේ පෙන්වීම (GitHub Pages ෆෝල්ඩර් පාත් එක සමඟ නිවැරදිව ක්‍රියාත්මක වේ)
  */
 function generateQRCode(id) {
     let qrContainer = document.getElementById("qr-container");
@@ -150,9 +150,10 @@ function generateQRCode(id) {
     qrcodeDiv.innerHTML = ""; // මීට පෙර තිබූ QR එක clear කිරීම
     qrContainer.classList.remove("hidden"); // QR Box එක පෙන්වීම
 
-    // Staff view page එකේ URL එක සකස් කිරීම
-    // (GitHub Pages වල host කළ පසු window.location.origin හරහා නිවැරදි ලින්ක් එක හැදේ)
-    let viewPageUrl = `${window.location.origin}/view.html?id=${id}`;
+    // GitHub Pages හෝ Live Server එකේ repository/folder නම සමඟ නිවැරදි URL එක සකස් කිරීම
+    let path = window.location.pathname;
+    let folderPath = path.substring(0, path.lastIndexOf('/'));
+    let viewPageUrl = `${window.location.origin}${folderPath}/view.html?id=${id}`;
 
     // QRCode library එක පාවිච්චි කරලා QR එක ඇඳීම
     new QRCode(qrcodeDiv, {
